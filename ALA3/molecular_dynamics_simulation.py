@@ -47,15 +47,13 @@ def count_distance(file, number):
                 list_atom1 = list(map(float, list_atom1[3:6]))
                 print(list_atom1)
                 list_atom2 = list(map(float, list_atom2[3:6]))
-                # # print(list_atom1[3])
-                # distance = sqrt(
-                #     pow((list_atom1[3] - list_atom2[3]), 2)
-                #     + pow((list_atom1[4] - list_atom2[4]), 2)
-                #     + pow((list_atom1[5] - list_atom2[5]), 2)
-                # )
-                #
-                # print(distance)
-                #
+                distance = sqrt(
+                    ((list_atom1[0] - list_atom2[0]) ** 2)
+                    + ((list_atom1[1] - list_atom2[1]) ** 2)
+                    + ((list_atom1[2] - list_atom2[2]) ** 2)
+                )
+
+                print(distance)
 
 
 """Main function."""
@@ -70,12 +68,9 @@ def Molecular_Dynamics_Simulation(file_input):
             number_atoms = linecache.getline(file_input, 2)
             print("Number of atoms:", number_atoms)
             count_distance(file_input, number_atoms)
-            # line_3 = linecache.getline(file_input, 3)
-            # print(line_3.split()[3])
 
     except Exception as e:
         logging.info(f"Error while opening file: {e}")
-        # return 0
 
 
 file_input = "data.gro"

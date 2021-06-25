@@ -1,4 +1,4 @@
-"""Calcultation of atomic distances."""
+"""Calculation of atomic distances."""
 
 import math
 

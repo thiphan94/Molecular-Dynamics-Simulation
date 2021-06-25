@@ -43,11 +43,11 @@ def count_distance(file, number):
                 atom1 = lines[index + 1]
                 atom2 = lines[index + int(number)]
                 list_atom1 = atom1.split()
-                print(type(list_atom1[3]))
                 list_atom2 = atom2.split()
-                x = int(list_atom1[4])
-                print(x)
-                # print(list_atom1[3])
+                list_atom1 = list(map(float, list_atom1[3:6]))
+                print(list_atom1)
+                list_atom2 = list(map(float, list_atom2[3:6]))
+                # # print(list_atom1[3])
                 # distance = sqrt(
                 #     pow((list_atom1[3] - list_atom2[3]), 2)
                 #     + pow((list_atom1[4] - list_atom2[4]), 2)
@@ -55,6 +55,7 @@ def count_distance(file, number):
                 # )
                 #
                 # print(distance)
+                #
 
 
 """Main function."""

@@ -38,21 +38,21 @@ def count_frame(file):
 def count_distance(file, number):
     with open(file) as f:
         lines = f.readlines()
-        for index, line in enumerate(lines):
+        # for index, line in enumerate(lines):
+        for index, line in enumerate(lines[0:50]):
             if line == number:
                 atom1 = lines[index + 1]
                 atom2 = lines[index + int(number)]
                 list_atom1 = atom1.split()
                 list_atom2 = atom2.split()
                 list_atom1 = list(map(float, list_atom1[3:6]))
-                # print(list_atom1)
                 list_atom2 = list(map(float, list_atom2[3:6]))
-                a = (
+                distance = (
                     ((list_atom2[0] - list_atom1[0]) ** 2)
                     + ((list_atom2[1] - list_atom1[1]) ** 2)
                     + ((list_atom2[2] - list_atom1[2]) ** 2)
-                )
-                distance = a ** 0.5
+                ) ** 0.5
+                # distance = a ** 0.5
 
                 print(distance)
 

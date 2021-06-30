@@ -52,9 +52,24 @@ def count_distance(file, number):
                     + ((list_atom2[1] - list_atom1[1]) ** 2)
                     + ((list_atom2[2] - list_atom1[2]) ** 2)
                 ) ** 0.5
-                # distance = a ** 0.5
 
                 print(distance)
+
+
+"""Function to calculate dihedral angles."""
+
+
+def dihedral_angle(file):
+    with open(file) as f:
+        lines = f.readlines()
+        # for index, line in enumerate(lines):
+        for index, line in enumerate(lines[0:20]):
+            if len(line.split()) > 2 and line.split()[1] != "by":
+                print(line.split()[1])
+                if line.split()[1] in ["C", "N"]:
+                    list_alpha.append(line.split()[1])
+        # print(lines[2].split()[1])
+        # #     print("ok")
 
 
 """Main function."""
@@ -69,6 +84,7 @@ def Molecular_Dynamics_Simulation(file_input):
             number_atoms = linecache.getline(file_input, 2)
             print("Number of atoms:", number_atoms)
             count_distance(file_input, number_atoms)
+            dihedral_angle(file_input)
 
     except Exception as e:
         logging.info(f"Error while opening file: {e}")

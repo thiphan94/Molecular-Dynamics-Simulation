@@ -53,23 +53,48 @@ def count_distance(file, number):
                     + ((list_atom2[2] - list_atom1[2]) ** 2)
                 ) ** 0.5
 
-                print(distance)
+                # print(distance)
 
 
 """Function to calculate dihedral angles."""
 
 
-def dihedral_angle(file):
+def dihedral_angle(file, number):
     with open(file) as f:
+        last = int(number) + 2
         lines = f.readlines()
-        # for index, line in enumerate(lines):
-        for index, line in enumerate(lines[0:20]):
-            if len(line.split()) > 2 and line.split()[1] != "by":
-                print(line.split()[1])
-                if line.split()[1] in ["C", "N"]:
-                    list_alpha.append(line.split()[1])
-        # print(lines[2].split()[1])
-        # #     print("ok")
+        # list of atoms to calculate angle phi
+        list_angle_phi = []
+        # list of atoms to calculate angle psi
+        list_angle_psi = []
+        # index of four atoms in chain phi
+        phi = []
+        # index of four atoms in chain psi
+        psi = []
+        for index, line in enumerate(lines[0:last]):
+            if len(lines[index].split()) > 4 and lines[index].split()[1] != "by":
+                if lines[index].split()[1] == "N":
+                    phi.append(lines[index].split()[2])
+                    if len(psi) == 1:
+                        psi.append(lines[index].split()[2])
+                if lines[index].split()[1] == "CA":
+                    phi.append(lines[index].split()[2])
+                    if len(psi) == 2:
+                        psi.append(lines[index].split()[2])
+                if lines[index].split()[1] == "C":
+                    phi.append(lines[index].split()[2])
+                    if len(psi) == 0 or len(psi) == 3:
+                        psi.append(lines[index].split()[2])
+                # print("psi:", psi)
+                if len(phi) == 4:
+                    list_angle_phi.append(phi[:])
+                    del phi[:3]
+                if len(psi) == 4:
+                    list_angle_psi.append(psi[:])
+                    del psi[:3]
+
+        print(list_angle_phi)
+        print(list_angle_psi)
 
 
 """Main function."""
@@ -84,11 +109,12 @@ def Molecular_Dynamics_Simulation(file_input):
             number_atoms = linecache.getline(file_input, 2)
             print("Number of atoms:", number_atoms)
             count_distance(file_input, number_atoms)
-            dihedral_angle(file_input)
+
+            dihedral_angle(file_input, number_atoms)
 
     except Exception as e:
         logging.info(f"Error while opening file: {e}")
 
 
-file_input = "data.gro"
+file_input = "ala3.gro"
 Molecular_Dynamics_Simulation(file_input)

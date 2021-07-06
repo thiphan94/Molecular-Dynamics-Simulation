@@ -67,24 +67,36 @@ def dihedral_angle(file, number):
         list_angle_phi = []
         # list of atoms to calculate angle psi
         list_angle_psi = []
+        # list of coordinates_atoms to calculate angle phi
+        list_coordinates_phi = []
+        # list of coordinates_atoms to calculate angle psi
+        list_coordinates_psi = []
         # index of four atoms in chain phi
         phi = []
         # index of four atoms in chain psi
         psi = []
+        phi_coordinates = []
+        psi_coordinates = []
         for index, line in enumerate(lines[0:last]):
             if len(lines[index].split()) > 4 and lines[index].split()[1] != "by":
                 if lines[index].split()[1] == "N":
                     phi.append(lines[index].split()[2])
+                    phi_coordinates.append(lines[index].split()[3:6])
                     if len(psi) == 1:
                         psi.append(lines[index].split()[2])
+                        psi_coordinates.append(lines[index].split()[3:6])
                 if lines[index].split()[1] == "CA":
                     phi.append(lines[index].split()[2])
+                    phi_coordinates.append(lines[index].split()[3:6])
                     if len(psi) == 2:
                         psi.append(lines[index].split()[2])
+                        psi_coordinates.append(lines[index].split()[3:6])
                 if lines[index].split()[1] == "C":
                     phi.append(lines[index].split()[2])
+                    phi_coordinates.append(lines[index].split()[3:6])
                     if len(psi) == 0 or len(psi) == 3:
                         psi.append(lines[index].split()[2])
+                        psi_coordinates.append(lines[index].split()[3:6])
                 # print("psi:", psi)
                 if len(phi) == 4:
                     list_angle_phi.append(phi[:])
@@ -92,67 +104,15 @@ def dihedral_angle(file, number):
                 if len(psi) == 4:
                     list_angle_psi.append(psi[:])
                     del psi[:3]
+                if len(phi_coordinates) == 4:
+                    list_coordinates_phi.append(phi_coordinates[:])
+                    del phi_coordinates[:3]
+                if len(psi_coordinates) == 4:
+                    list_coordinates_psi.append(psi_coordinates[:])
+                    del psi_coordinates[:3]
 
         print(list_angle_phi)
         print(list_angle_psi)
-
-        coordinates_atom(file, number, list_angle_phi, list_angle_psi)
-
-
-def coordinates_atom(file, number, list_phi, list_psi):
-    with open(file) as f:
-        last = int(number) + 2
-        lines = f.readlines()
-        # list of coordinates_atoms to calculate angle phi
-        list_coordinates_phi = []
-        # list of coordinates_atoms to calculate angle psi
-        list_coordinates_psi = []
-        # coordinates of atom in chain phi
-        phi = []
-        # coordinates of atom in chain psi
-        psi = []
-        i = 0
-        #     print("ok")
-        for i in range(len(list_phi)):
-            for index, line in enumerate(lines[0:last]):
-                # print(line)
-                if len(lines[index].split()) > 4 and lines[index].split()[1] != "by":
-
-                    if lines[index].split()[2] == list_phi[i][0]:
-                        phi.append(lines[index].split()[3:6])
-                        print(phi)
-                    # psi.append(lines[index].split()[3:6])
-
-                    if (
-                        lines[index].split()[2]
-                        == list_phi[i][1]
-                        # or lines[index].split()[2] == list[1][1]
-                    ):
-                        phi.append(lines[index].split()[3:6])
-                        # psi.append(lines[index].split()[3:6])
-
-                    if (
-                        lines[index].split()[2]
-                        == list_phi[i][2]
-                        # or lines[index].split()[2] == list[1][2]
-                    ):
-                        phi.append(lines[index].split()[3:6])
-                        # psi.append(lines[index].split()[3:6])
-
-                    if (
-                        lines[index].split()[2]
-                        == list_phi[i][3]
-                        # or lines[index].split()[2] == list[1][3]
-                    ):
-                        phi.append(lines[index].split()[3:6])
-                        # psi.append(lines[index].split()[3:6])
-
-                    if len(phi) == 4:
-                        list_coordinates_phi.append(phi[:])
-                        del phi[:]
-                    if len(psi) == 4:
-                        list_coordinates_psi.append(psi[:])
-                        del psi[:3]
         print(list_coordinates_phi)
         print(list_coordinates_psi)
 

@@ -80,23 +80,23 @@ def dihedral_angle(file, number):
         for index, line in enumerate(lines[0:last]):
             if len(lines[index].split()) > 4 and lines[index].split()[1] != "by":
                 if lines[index].split()[1] == "N":
-                    phi.append(lines[index].split()[2])
-                    phi_coordinates.append(lines[index].split()[3:6])
-                    if len(psi) == 1:
-                        psi.append(lines[index].split()[2])
-                        psi_coordinates.append(lines[index].split()[3:6])
+                    psi.append(lines[index].split()[2])
+                    psi_coordinates.append(lines[index].split()[3:6])
+                    if len(phi) == 1:
+                        phi.append(lines[index].split()[2])
+                        phi_coordinates.append(lines[index].split()[3:6])
                 if lines[index].split()[1] == "CA":
-                    phi.append(lines[index].split()[2])
-                    phi_coordinates.append(lines[index].split()[3:6])
-                    if len(psi) == 2:
-                        psi.append(lines[index].split()[2])
-                        psi_coordinates.append(lines[index].split()[3:6])
+                    psi.append(lines[index].split()[2])
+                    psi_coordinates.append(lines[index].split()[3:6])
+                    if len(phi) == 2:
+                        phi.append(lines[index].split()[2])
+                        phi_coordinates.append(lines[index].split()[3:6])
                 if lines[index].split()[1] == "C":
-                    phi.append(lines[index].split()[2])
-                    phi_coordinates.append(lines[index].split()[3:6])
-                    if len(psi) == 0 or len(psi) == 3:
-                        psi.append(lines[index].split()[2])
-                        psi_coordinates.append(lines[index].split()[3:6])
+                    psi.append(lines[index].split()[2])
+                    psi_coordinates.append(lines[index].split()[3:6])
+                    if len(phi) == 0 or len(psi) == 3:
+                        phi.append(lines[index].split()[2])
+                        phi_coordinates.append(lines[index].split()[3:6])
                 # print("psi:", psi)
                 if len(phi) == 4:
                     list_angle_phi.append(phi[:])
@@ -111,10 +111,42 @@ def dihedral_angle(file, number):
                     list_coordinates_psi.append(psi_coordinates[:])
                     del psi_coordinates[:3]
 
-        print(list_angle_phi)
-        print(list_angle_psi)
-        print(list_coordinates_phi)
+        # print(list_angle_psi)
+        # print(list_angle_phi)
+        #
         print(list_coordinates_psi)
+        # print(list_coordinates_phi)
+        vector(list_coordinates_psi)
+
+
+def vector(list_coordinates_psi):
+    ij = []
+    kj = []
+    kl = []
+
+    for chain in list_coordinates_psi:
+
+        x_ij = float(chain[1][0]) - float(chain[0][0])
+        y_ij = float(chain[1][1]) - float(chain[0][1])
+        z_ij = float(chain[1][2]) - float(chain[0][2])
+
+        ij.extend([x_ij, y_ij, z_ij])
+
+        x_kj = float(chain[2][0]) - float(chain[1][0])
+        y_kj = float(chain[2][1]) - float(chain[1][1])
+        z_kj = float(chain[2][2]) - float(chain[1][2])
+
+        kj.extend(x_kj, y_kj, z_kj)
+
+        x_kl = float(chain[3][0]) - float(chain[2][0])
+        y_kl = float(chain[3][1]) - float(chain[2][1])
+        z_kl = float(chain[3][2]) - float(chain[2][2])
+
+        kl.extend(x_kl, y_kl, z_kl)
+
+    print(ij)
+    print(x_kj, y_kj, z_kj)
+    print(x_kl, y_kl, z_kl)
 
 
 """Main function."""

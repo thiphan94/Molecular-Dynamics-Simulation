@@ -96,6 +96,66 @@ def dihedral_angle(file, number):
         print(list_angle_phi)
         print(list_angle_psi)
 
+        coordinates_atom(file, number, list_angle_phi, list_angle_psi)
+
+
+def coordinates_atom(file, number, list_phi, list_psi):
+    with open(file) as f:
+        last = int(number) + 2
+        lines = f.readlines()
+        # list of coordinates_atoms to calculate angle phi
+        list_coordinates_phi = []
+        # list of coordinates_atoms to calculate angle psi
+        list_coordinates_psi = []
+        # coordinates of atom in chain phi
+        phi = []
+        # coordinates of atom in chain psi
+        psi = []
+        i = 0
+        #     print("ok")
+        for i in range(len(list_phi)):
+            for index, line in enumerate(lines[0:last]):
+                # print(line)
+                if len(lines[index].split()) > 4 and lines[index].split()[1] != "by":
+
+                    if lines[index].split()[2] == list_phi[i][0]:
+                        phi.append(lines[index].split()[3:6])
+                        print(phi)
+                    # psi.append(lines[index].split()[3:6])
+
+                    if (
+                        lines[index].split()[2]
+                        == list_phi[i][1]
+                        # or lines[index].split()[2] == list[1][1]
+                    ):
+                        phi.append(lines[index].split()[3:6])
+                        # psi.append(lines[index].split()[3:6])
+
+                    if (
+                        lines[index].split()[2]
+                        == list_phi[i][2]
+                        # or lines[index].split()[2] == list[1][2]
+                    ):
+                        phi.append(lines[index].split()[3:6])
+                        # psi.append(lines[index].split()[3:6])
+
+                    if (
+                        lines[index].split()[2]
+                        == list_phi[i][3]
+                        # or lines[index].split()[2] == list[1][3]
+                    ):
+                        phi.append(lines[index].split()[3:6])
+                        # psi.append(lines[index].split()[3:6])
+
+                    if len(phi) == 4:
+                        list_coordinates_phi.append(phi[:])
+                        del phi[:]
+                    if len(psi) == 4:
+                        list_coordinates_psi.append(psi[:])
+                        del psi[:3]
+        print(list_coordinates_phi)
+        print(list_coordinates_psi)
+
 
 """Main function."""
 
@@ -116,5 +176,5 @@ def Molecular_Dynamics_Simulation(file_input):
         logging.info(f"Error while opening file: {e}")
 
 
-file_input = "ala3.gro"
+file_input = "data.gro"
 Molecular_Dynamics_Simulation(file_input)

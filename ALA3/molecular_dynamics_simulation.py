@@ -130,23 +130,23 @@ def vector(list_coordinates_psi):
         y_ij = float(chain[1][1]) - float(chain[0][1])
         z_ij = float(chain[1][2]) - float(chain[0][2])
 
-        ij.extend([x_ij, y_ij, z_ij])
+        ij.append([x_ij, y_ij, z_ij])
 
         x_kj = float(chain[2][0]) - float(chain[1][0])
         y_kj = float(chain[2][1]) - float(chain[1][1])
         z_kj = float(chain[2][2]) - float(chain[1][2])
 
-        kj.extend(x_kj, y_kj, z_kj)
+        kj.append([x_kj, y_kj, z_kj])
 
         x_kl = float(chain[3][0]) - float(chain[2][0])
         y_kl = float(chain[3][1]) - float(chain[2][1])
         z_kl = float(chain[3][2]) - float(chain[2][2])
 
-        kl.extend(x_kl, y_kl, z_kl)
+        kl.append([x_kl, y_kl, z_kl])
 
     print(ij)
-    print(x_kj, y_kj, z_kj)
-    print(x_kl, y_kl, z_kl)
+    print(kj)
+    print(kl)
 
 
 """Main function."""

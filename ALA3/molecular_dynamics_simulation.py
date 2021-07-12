@@ -115,38 +115,67 @@ def dihedral_angle(file, number):
         # print(list_angle_phi)
         #
         print(list_coordinates_psi)
-        # print(list_coordinates_phi)
-        vector(list_coordinates_psi)
+        print(list_coordinates_phi)
+        vector(list_coordinates_psi, list_coordinates_phi)
 
 
-def vector(list_coordinates_psi):
-    ij = []
-    kj = []
-    kl = []
+def vector(list_coordinates_psi, list_coordinates_phi):
+    ij_psi = []
+    kj_psi = []
+    kl_psi = []
 
-    for chain in list_coordinates_psi:
+    ij_phi = []
+    kj_phi = []
+    kl_phi = []
 
-        x_ij = float(chain[1][0]) - float(chain[0][0])
-        y_ij = float(chain[1][1]) - float(chain[0][1])
-        z_ij = float(chain[1][2]) - float(chain[0][2])
+    for chain_psi in list_coordinates_psi:
 
-        ij.append([x_ij, y_ij, z_ij])
+        x_ij_psi = float(chain_psi[1][0]) - float(chain_psi[0][0])
+        y_ij_psi = float(chain_psi[1][1]) - float(chain_psi[0][1])
+        z_ij_psi = float(chain_psi[1][2]) - float(chain_psi[0][2])
 
-        x_kj = float(chain[2][0]) - float(chain[1][0])
-        y_kj = float(chain[2][1]) - float(chain[1][1])
-        z_kj = float(chain[2][2]) - float(chain[1][2])
+        ij_psi.append([x_ij_psi, y_ij_psi, z_ij_psi])
 
-        kj.append([x_kj, y_kj, z_kj])
+        x_kj_psi = float(chain_psi[2][0]) - float(chain_psi[1][0])
+        y_kj_psi = float(chain_psi[2][1]) - float(chain_psi[1][1])
+        z_kj_psi = float(chain_psi[2][2]) - float(chain_psi[1][2])
 
-        x_kl = float(chain[3][0]) - float(chain[2][0])
-        y_kl = float(chain[3][1]) - float(chain[2][1])
-        z_kl = float(chain[3][2]) - float(chain[2][2])
+        kj_psi.append([x_kj_psi, y_kj_psi, z_kj_psi])
 
-        kl.append([x_kl, y_kl, z_kl])
+        x_kl_psi = float(chain_psi[3][0]) - float(chain_psi[2][0])
+        y_kl_psi = float(chain_psi[3][1]) - float(chain_psi[2][1])
+        z_kl_psi = float(chain_psi[3][2]) - float(chain_psi[2][2])
 
-    print(ij)
-    print(kj)
-    print(kl)
+        kl_psi.append([x_kl_psi, y_kl_psi, z_kl_psi])
+
+    for chain_phi in list_coordinates_phi:
+
+        x_ij_phi = float(chain_phi[1][0]) - float(chain_phi[0][0])
+        y_ij_phi = float(chain_phi[1][1]) - float(chain_phi[0][1])
+        z_ij_phi = float(chain_phi[1][2]) - float(chain_phi[0][2])
+
+        ij_phi.append([x_ij_phi, y_ij_phi, z_ij_phi])
+
+        x_kj_phi = float(chain_phi[2][0]) - float(chain_phi[1][0])
+        y_kj_phi = float(chain_phi[2][1]) - float(chain_phi[1][1])
+        z_kj_phi = float(chain_phi[2][2]) - float(chain_phi[1][2])
+
+        kj_phi.append([x_kj_phi, y_kj_phi, z_kj_phi])
+
+        x_kl_phi = float(chain_phi[3][0]) - float(chain_phi[2][0])
+        y_kl_phi = float(chain_phi[3][1]) - float(chain_phi[2][1])
+        z_kl_phi = float(chain_phi[3][2]) - float(chain_phi[2][2])
+
+        kl_phi.append([x_kl_phi, y_kl_phi, z_kl_phi])
+
+    print(ij_psi)
+    print(kj_psi)
+    print(kl_psi)
+
+    print("vector phi")
+    print(ij_phi)
+    print(kj_phi)
+    print(kl_phi)
 
 
 """Main function."""

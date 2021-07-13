@@ -228,7 +228,7 @@ def vector_im_ln(vector_psi, vector_phi):
 
         print("ln =", ln)
 
-        value_arccos = np.dot(im, ln) / (np.linalg.norm(im) * np.linalg.norm(ln))
+        value_arccos = np.dot(im, ln) / np.dot(np.linalg.norm(im), np.linalg.norm(ln))
         print(value_arccos)
     # pass
 

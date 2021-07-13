@@ -4,6 +4,7 @@ import math
 import logging
 import linecache
 import re
+import numpy as np
 
 # """FUnction to open the file."""
 #
@@ -182,14 +183,45 @@ def vector(list_coordinates_psi, list_coordinates_phi):
         del kj_phi[:]
         del kl_phi[:]
 
-    print(vector_psi)
-    print(vector_phi)
+    # print(vector_psi)
+    # print(vector_phi)
+    vector_im_ln(vector_psi, vector_phi)
 
 
-def vector_im_ln(ij_psi, kj_psi, kl_psi, ij_phi, kj_phi, kl_phi):
-    # for vector in ij_psi:
+def vector_im_ln(vector_psi, vector_phi):
 
-    pass
+    for vector in vector_psi:
+        vector_ij = np.array(vector[0])
+        vector_kj = np.array(vector[1])
+        vector_kl = np.array(vector[2])
+        print(vector_ij)
+        print(vector_kj)
+        print(vector_kl)
+
+        # a = np.dot(vector_ij, vector_kj)
+        # print("ij*kj = ", a)
+        # b = np.linalg.norm(vector_kj)
+        # print("kj^2 = ", b)
+        # c = np.dot(vector_ij, vector_kj) / np.linalg.norm(vector_kj)
+        # print("division =", c)
+        # d = np.dot(
+        #     (np.dot(vector_ij, vector_kj) / np.linalg.norm(vector_kj)), vector_kj
+        # )
+        # print("dot 2: ", d)
+        im = vector_ij - np.dot(
+            (np.dot(vector_ij, vector_kj) / np.linalg.norm(vector_kj)), vector_kj
+        )
+        print("im =", im)
+
+        ln = -vector_kl + np.dot(
+            (np.dot(vector_kl, vector_kj) / np.linalg.norm(vector_kj)), vector_kj
+        )
+
+        print("ln =", ln)
+
+        value_arccos = np.dot(im, ln) / (np.linalg.norm(im) * np.linalg.norm(ln))
+        print(value_arccos)
+    # pass
 
 
 """Main function."""

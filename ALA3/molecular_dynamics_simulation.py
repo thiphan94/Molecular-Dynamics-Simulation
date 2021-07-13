@@ -78,6 +78,8 @@ def dihedral_angle(file, number):
         psi = []
         phi_coordinates = []
         psi_coordinates = []
+        vector_psi = []
+        vector_phi = []
         for index, line in enumerate(lines[0:last]):
             if len(lines[index].split()) > 4 and lines[index].split()[1] != "by":
                 if lines[index].split()[1] == "N":
@@ -114,7 +116,9 @@ def dihedral_angle(file, number):
 
         print(list_coordinates_psi)
         print(list_coordinates_phi)
-        vector(list_coordinates_psi, list_coordinates_phi)
+        vector_psi, vector_phi = vector(list_coordinates_psi, list_coordinates_phi)
+
+        vector_im_ln(vector_psi, vector_phi)
 
 
 """Function to calculate vector between 4 atoms."""
@@ -185,7 +189,12 @@ def vector(list_coordinates_psi, list_coordinates_phi):
 
     # print(vector_psi)
     # print(vector_phi)
-    vector_im_ln(vector_psi, vector_phi)
+    return vector_psi, vector_phi
+
+    # vector_im_ln(vector_psi, vector_phi)
+
+
+"""Function to calculate vector im and vector ln."""
 
 
 def vector_im_ln(vector_psi, vector_phi):

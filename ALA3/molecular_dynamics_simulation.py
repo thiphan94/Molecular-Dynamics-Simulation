@@ -118,7 +118,7 @@ def dihedral_angle(file, number):
         print(list_coordinates_phi)
         vector_psi, vector_phi = vector(list_coordinates_psi, list_coordinates_phi)
 
-        vector_im_ln(vector_psi, vector_phi)
+        arccos_angle(vector_psi, vector_phi)
 
 
 """Function to calculate vector between 4 atoms."""
@@ -191,13 +191,11 @@ def vector(list_coordinates_psi, list_coordinates_phi):
     # print(vector_phi)
     return vector_psi, vector_phi
 
-    # vector_im_ln(vector_psi, vector_phi)
-
 
 """Function to calculate vector im and vector ln."""
 
 
-def vector_im_ln(vector_psi, vector_phi):
+def arccos_angle(vector_psi, vector_phi):
 
     for vector in vector_psi:
         vector_ij = np.array(vector[0])
@@ -207,16 +205,6 @@ def vector_im_ln(vector_psi, vector_phi):
         print(vector_kj)
         print(vector_kl)
 
-        # a = np.dot(vector_ij, vector_kj)
-        # print("ij*kj = ", a)
-        # b = np.linalg.norm(vector_kj)
-        # print("kj^2 = ", b)
-        # c = np.dot(vector_ij, vector_kj) / np.linalg.norm(vector_kj)
-        # print("division =", c)
-        # d = np.dot(
-        #     (np.dot(vector_ij, vector_kj) / np.linalg.norm(vector_kj)), vector_kj
-        # )
-        # print("dot 2: ", d)
         im = vector_ij - np.dot(
             (np.dot(vector_ij, vector_kj) / np.linalg.norm(vector_kj)), vector_kj
         )
@@ -230,7 +218,11 @@ def vector_im_ln(vector_psi, vector_phi):
 
         value_arccos = np.dot(im, ln) / np.dot(np.linalg.norm(im), np.linalg.norm(ln))
         print(value_arccos)
-    # pass
+        # pass
+        sign_angle = np.sign(np.dot(vector_ij, np.cross(vector_kj, vector_kl)))
+        print(sign_angle)
+        angle = math.degrees(np.arccos(value_arccos) * sign_angle)
+        print(angle)
 
 
 """Main function."""

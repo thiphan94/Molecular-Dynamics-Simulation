@@ -5,6 +5,7 @@ import logging
 import linecache
 import re
 import numpy as np
+import sys
 
 # """FUnction to open the file."""
 #
@@ -254,5 +255,6 @@ def Molecular_Dynamics_Simulation(file_input):
         logging.info(f"Error while opening file: {e}")
 
 
-file_input = "data.gro"
+# file_input = "data.gro"
+file_input = str(sys.argv[1])
 Molecular_Dynamics_Simulation(file_input)

@@ -36,14 +36,16 @@ def count_frame(file):
 """Function to calculate the end-to-end distance."""
 
 
-def count_distance(file, number):
+def count_distance(file, number, from_index, to_index):
     with open(file) as f:
         lines = f.readlines()
-        # for index, line in enumerate(lines):
-        for index, line in enumerate(lines[0:50]):
+        for index, line in enumerate(lines[from_index:to_index]):
             if line == number:
                 atom1 = lines[index + 1]
+                # print(atom1)
+                # print(index)
                 atom2 = lines[index + int(number)]
+                # print(atom2)
                 list_atom1 = atom1.split()
                 list_atom2 = atom2.split()
                 list_atom1 = list(map(float, list_atom1[3:6]))
@@ -54,7 +56,7 @@ def count_distance(file, number):
                     + ((list_atom2[2] - list_atom1[2]) ** 2)
                 ) ** 0.5
 
-                # print(distance)
+                print(distance)
 
 
 """Function to calculate dihedral angles."""
@@ -236,9 +238,17 @@ def Molecular_Dynamics_Simulation(file_input):
             print("Number of frames:", number_frames)
             number_atoms = linecache.getline(file_input, 2)
             print("Number of atoms:", number_atoms)
-            count_distance(file_input, number_atoms)
+            from_index = 0
+            to_index = int(number_atoms) + 2
+            for i in range(0, int(number_frames)):
+                print(from_index)
+                print("to:  ", int(to_index))
+                # to_index = int(number_atoms) + 3
+                count_distance(file_input, number_atoms, from_index, to_index)
 
-            dihedral_angle(file_input, number_atoms)
+                from_index = from_index + 3 + int(number_atoms)
+                to_index += int(number_atoms) + 3
+            # dihedral_angle(file_input, number_atoms)
 
     except Exception as e:
         logging.info(f"Error while opening file: {e}")

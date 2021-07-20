@@ -41,17 +41,14 @@ def count_distance(file, number, from_index, to_index):
     with open(file) as f:
         # file_data = open("myfile.txt", "x")
         lines = f.readlines()
-        for index, line in enumerate(lines[from_index:to_index]):
+        lines = lines[from_index:to_index]
+        for index, line in enumerate(lines):
+
             pattern = "=(.+?)step"
             if line == number:
-                print(lines[index - 1])
                 t = re.search("=(.+?)step", lines[index - 1]).group(1)
-                print(t)
                 atom1 = lines[index + 1]
-                # print(atom1)
-                # print(index)
                 atom2 = lines[index + int(number)]
-                # print(atom2)
                 list_atom1 = atom1.split()
                 list_atom2 = atom2.split()
                 list_atom1 = list(map(float, list_atom1[3:6]))
@@ -62,8 +59,7 @@ def count_distance(file, number, from_index, to_index):
                     + ((list_atom2[2] - list_atom1[2]) ** 2)
                 ) ** 0.5
 
-                # print(distance)
-        return distance
+        return t, distance
 
 
 def count_angle(file, number):
@@ -325,17 +321,17 @@ def Molecular_Dynamics_Simulation(file_input, file_data):
             #     print(row)
             print(matrix_data)
             # for i in range(0, int(number_frames)):
-            # for i in range(0, 2):
-            #     print(from_index)
-            #     print("to:  ", int(to_index))
-            #     # to_index = int(number_atoms) + 3
-            #     distance = count_distance(
-            #         file_input, number_atoms, from_index, to_index
-            #     )
-            #     print(distance)
-            #
-            #     from_index = from_index + 3 + int(number_atoms)
-            #     to_index += int(number_atoms) + 3
+            for i in range(0, 2):
+                print(from_index)
+                print("to:  ", int(to_index))
+                # to_index = int(number_atoms) + 3
+                t, distance = count_distance(
+                    file_input, number_atoms, from_index, to_index
+                )
+                print(t, distance)
+
+                from_index = from_index + 3 + int(number_atoms)
+                to_index += int(number_atoms) + 3
             # dihedral_angle(file_input, number_atoms)
 
     except Exception as e:

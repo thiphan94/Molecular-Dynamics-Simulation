@@ -62,7 +62,54 @@ def count_distance(file, number, from_index, to_index):
                     + ((list_atom2[2] - list_atom1[2]) ** 2)
                 ) ** 0.5
 
-                print(distance)
+                # print(distance)
+        return distance
+
+
+def count_angle(file, number):
+    with open(file) as f:
+        last = int(number) + 2
+        lines = f.readlines()
+        # list of atoms to calculate angle phi
+        list_angle_phi = []
+        # list of atoms to calculate angle psi
+        list_angle_psi = []
+
+        # index of four atoms in chain phi
+        phi = []
+        # index of four atoms in chain psi
+        psi = []
+
+        for index, line in enumerate(lines[0:last]):
+            if len(lines[index].split()) > 4 and lines[index].split()[1] != "by":
+                if lines[index].split()[1] == "N":
+                    psi.append(lines[index].split()[2])
+
+                    if len(phi) == 1:
+                        phi.append(lines[index].split()[2])
+
+                if lines[index].split()[1] == "CA":
+                    psi.append(lines[index].split()[2])
+
+                    if len(phi) == 2:
+                        phi.append(lines[index].split()[2])
+
+                if lines[index].split()[1] == "C":
+                    psi.append(lines[index].split()[2])
+
+                    if len(phi) == 0 or len(psi) == 3:
+                        phi.append(lines[index].split()[2])
+
+                if len(phi) == 4:
+                    list_angle_phi.append(phi[:])
+                    del phi[:3]
+                if len(psi) == 4:
+                    list_angle_psi.append(psi[:])
+                    del psi[:3]
+
+        # print(list_angle_phi)
+        # print(list_angle_psi)
+        return (list_angle_psi, list_angle_phi)
 
 
 """Function to calculate dihedral angles."""
@@ -122,11 +169,13 @@ def dihedral_angle(file, number):
                     list_coordinates_psi.append(psi_coordinates[:])
                     del psi_coordinates[:3]
 
-        print(list_coordinates_psi)
-        print(list_coordinates_phi)
-        vector_psi, vector_phi = vector(list_coordinates_psi, list_coordinates_phi)
+        # print(list_coordinates_psi)
+        # print(list_coordinates_phi)
+        # vector_psi, vector_phi = vector(list_coordinates_psi, list_coordinates_phi)
+        #
+        # arccos_angle(vector_psi, vector_phi)
 
-        arccos_angle(vector_psi, vector_phi)
+        print(list_angle_phi)
 
 
 """Function to calculate vector between 4 atoms."""
@@ -245,20 +294,48 @@ def Molecular_Dynamics_Simulation(file_input, file_data):
             number_atoms = linecache.getline(file_input, 2)
             print("Number of atoms:", number_atoms)
             f = open(file_data, "w+")
-            f.write("Number of frames " + str(number_frames))
-            f.write("Number of atoms " + str(number_atoms))
+            f.write("Number of frames " + str(number_frames) + "\n")
+            f.write("Number of atoms " + str(number_atoms) + "\n")
             # f.close()
+
             from_index = 0
             to_index = int(number_atoms) + 2
-            # for i in range(0, int(number_frames)):
-            for i in range(0, 2):
-                print(from_index)
-                print("to:  ", int(to_index))
-                # to_index = int(number_atoms) + 3
-                count_distance(file_input, number_atoms, from_index, to_index)
+            list_angle_psi, list_angle_phi = count_angle(file_input, number_atoms)
+            number_angle_psi = len(list_angle_psi)
+            number_angle_phi = len(list_angle_phi)
 
-                from_index = from_index + 3 + int(number_atoms)
-                to_index += int(number_atoms) + 3
+            cols = 2 + number_angle_phi + number_angle_psi
+            rows = 2
+
+            # matrix_data = np.tile(np.arange(rows), (columns, 1))
+            matrix_data = [[0 for i in range(cols)] for j in range(rows)]
+            index_psi = 1 + number_angle_psi
+
+            for i in range(len(matrix_data[0])):
+                if i == 0:
+                    matrix_data[0][0] = "t"
+                if i == 1:
+                    matrix_data[0][1] = "distance"
+                if 1 < i <= index_psi:
+                    matrix_data[0][i] = "psi" + str(i - 1)
+                if index_psi < i:
+                    matrix_data[0][i] = "phi" + str(i - number_angle_psi - 1)
+
+            # for row in matrix_data:
+            #     print(row)
+            print(matrix_data)
+            # for i in range(0, int(number_frames)):
+            # for i in range(0, 2):
+            #     print(from_index)
+            #     print("to:  ", int(to_index))
+            #     # to_index = int(number_atoms) + 3
+            #     distance = count_distance(
+            #         file_input, number_atoms, from_index, to_index
+            #     )
+            #     print(distance)
+            #
+            #     from_index = from_index + 3 + int(number_atoms)
+            #     to_index += int(number_atoms) + 3
             # dihedral_angle(file_input, number_atoms)
 
     except Exception as e:

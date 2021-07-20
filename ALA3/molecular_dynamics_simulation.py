@@ -39,9 +39,14 @@ def count_frame(file):
 
 def count_distance(file, number, from_index, to_index):
     with open(file) as f:
+        # file_data = open("myfile.txt", "x")
         lines = f.readlines()
         for index, line in enumerate(lines[from_index:to_index]):
+            pattern = "=(.+?)step"
             if line == number:
+                print(lines[index - 1])
+                t = re.search("=(.+?)step", lines[index - 1]).group(1)
+                print(t)
                 atom1 = lines[index + 1]
                 # print(atom1)
                 # print(index)
@@ -231,7 +236,7 @@ def arccos_angle(vector_psi, vector_phi):
 """Main function."""
 
 
-def Molecular_Dynamics_Simulation(file_input):
+def Molecular_Dynamics_Simulation(file_input, file_data):
     # file_opened = open_file(file_input)
     try:
         with open(file_input) as f:
@@ -239,9 +244,14 @@ def Molecular_Dynamics_Simulation(file_input):
             print("Number of frames:", number_frames)
             number_atoms = linecache.getline(file_input, 2)
             print("Number of atoms:", number_atoms)
+            f = open(file_data, "w+")
+            f.write("Number of frames " + str(number_frames))
+            f.write("Number of atoms " + str(number_atoms))
+            # f.close()
             from_index = 0
             to_index = int(number_atoms) + 2
-            for i in range(0, int(number_frames)):
+            # for i in range(0, int(number_frames)):
+            for i in range(0, 2):
                 print(from_index)
                 print("to:  ", int(to_index))
                 # to_index = int(number_atoms) + 3
@@ -252,9 +262,10 @@ def Molecular_Dynamics_Simulation(file_input):
             # dihedral_angle(file_input, number_atoms)
 
     except Exception as e:
-        logging.info(f"Error while opening file: {e}")
+        logging.info(f"Error while opening file gro: {e}")
 
 
 # file_input = "data.gro"
 file_input = str(sys.argv[1])
-Molecular_Dynamics_Simulation(file_input)
+file_data = str(sys.argv[2])
+Molecular_Dynamics_Simulation(file_input, file_data)

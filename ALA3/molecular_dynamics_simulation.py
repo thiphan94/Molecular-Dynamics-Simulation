@@ -237,23 +237,29 @@ def value_angle(vector_psi, vector_phi):
     list_angle_psi = []
     list_angle_phi = []
     for vector in vector_psi:
-        vector_ij = np.array(vector[0])
-        vector_kj = np.array(vector[1])
-        vector_kl = np.array(vector[2])
+        vector_ij_psi = np.array(vector[0])
+        vector_kj_psi = np.array(vector[1])
+        vector_kl_psi = np.array(vector[2])
 
-        im = vector_ij - np.dot(
-            (np.dot(vector_ij, vector_kj) / np.linalg.norm(vector_kj)), vector_kj
+        im_psi = vector_ij_psi - np.dot(
+            (np.dot(vector_ij_psi, vector_kj_psi) / np.linalg.norm(vector_kj_psi)),
+            vector_kj_psi,
         )
 
-        ln = -vector_kl + np.dot(
-            (np.dot(vector_kl, vector_kj) / np.linalg.norm(vector_kj)), vector_kj
+        ln_psi = -vector_kl_psi + np.dot(
+            (np.dot(vector_kl_psi, vector_kj_psi) / np.linalg.norm(vector_kj_psi)),
+            vector_kj_psi,
         )
 
-        value_arccos = np.dot(im, ln) / np.dot(np.linalg.norm(im), np.linalg.norm(ln))
+        value_arccos_psi = np.dot(im_psi, ln_psi) / np.dot(
+            np.linalg.norm(im_psi), np.linalg.norm(ln_psi)
+        )
 
-        sign_angle = np.sign(np.dot(vector_ij, np.cross(vector_kj, vector_kl)))
+        sign_angle_psi = np.sign(
+            np.dot(vector_ij_psi, np.cross(vector_kj_psi, vector_kl_psi))
+        )
 
-        angle_psi = math.degrees(np.arccos(value_arccos) * sign_angle)
+        angle_psi = math.degrees(np.arccos(value_arccos_psi) * sign_angle_psi)
         list_angle_psi.append(angle_psi)
 
     for vector in vector_phi:

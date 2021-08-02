@@ -6,19 +6,7 @@ import linecache
 import re
 import numpy as np
 import sys
-
-# """FUnction to open the file."""
-#
-#
-# def open_file(name_file):
-#     try:
-#         f = open(name_file, "r")
-#         # lines = f.readlines()
-#         # print(len(lines))
-#         return f
-#     except Exception as e:
-#         logger.info(f"Error while opening file: {e}")
-#         return 0
+import pandas as pd
 
 
 """Function to calculate frames in file."""
@@ -39,7 +27,6 @@ def count_frame(file):
 
 def count_distance(file, number, from_index, to_index):
     with open(file) as f:
-        # file_data = open("myfile.txt", "x")
         lines = f.readlines()
         lines = lines[from_index:to_index]
         for index, line in enumerate(lines):
@@ -112,7 +99,6 @@ def count_angle(file, number):
 
 def dihedral_angle(file, number, list_angle_psi, list_angle_phi, from_index, to_index):
     with open(file) as f:
-        # last = int(number) + 2
         lines = f.readlines()
         lines = lines[from_index:to_index]
 
@@ -129,14 +115,12 @@ def dihedral_angle(file, number, list_angle_psi, list_angle_phi, from_index, to_
                     lines[index].split()[2] in sublist for sublist in list_angle_psi
                 ):
 
-                    # print(lines[index].split()[2])
                     psi_coordinates.append(lines[index].split()[3:6])
 
                 if any(
                     lines[index].split()[2] in sublist for sublist in list_angle_phi
                 ):
 
-                    # print(lines[index].split()[2])
                     phi_coordinates.append(lines[index].split()[3:6])
 
                 if len(phi_coordinates) == 4:
@@ -147,16 +131,11 @@ def dihedral_angle(file, number, list_angle_psi, list_angle_phi, from_index, to_
                     list_coordinates_psi.append(psi_coordinates[:])
                     del psi_coordinates[:3]
 
-        # print(list_coordinates_psi)
-        #
-        # print(list_coordinates_phi)
         vector_psi, vector_phi = vector(list_coordinates_psi, list_coordinates_phi)
-        #
+
         angle_psi, angle_phi = value_angle(vector_psi, vector_phi)
 
         return angle_psi, angle_phi
-
-        # print(list_angle_phi)
 
 
 """Function to calculate vector between 4 atoms."""
@@ -224,9 +203,7 @@ def vector(list_coordinates_psi, list_coordinates_phi):
         del ij_phi[:]
         del kj_phi[:]
         del kl_phi[:]
-    #
-    # print(vector_psi)
-    # print(vector_phi)
+
     return vector_psi, vector_phi
 
 
@@ -294,17 +271,12 @@ def value_angle(vector_psi, vector_phi):
 
 
 def Molecular_Dynamics_Simulation(file_input, file_data):
-    # file_opened = open_file(file_input)
     try:
         with open(file_input) as f:
             number_frames = count_frame(file_input)
             print("Number of frames:", number_frames)
             number_atoms = linecache.getline(file_input, 2)
             print("Number of atoms:", number_atoms)
-            f = open(file_data, "w+")
-            f.write("Number of frames " + str(number_frames) + "\n")
-            f.write("Number of atoms " + str(number_atoms) + "\n")
-            # f.close()
 
             from_index = 0
             to_index = int(number_atoms) + 2
@@ -315,42 +287,33 @@ def Molecular_Dynamics_Simulation(file_input, file_data):
 
             # initialize size of matrix
             cols = 2 + number_angle_phi + number_angle_psi
-            rows = 5
 
-            # matrix_data = np.tile(np.arange(rows), (columns, 1))
-            matrix_data = [[0 for i in range(cols)] for j in range(rows)]
+            rows = number_frames
+
+            values = [[0 for i in range(cols)] for j in range(rows)]
             index_psi = 1 + number_angle_psi
 
-            # first row of matrix with title
-            for i in range(len(matrix_data[0])):
-                if i == 0:
-                    matrix_data[0][0] = "t"
-                if i == 1:
-                    matrix_data[0][1] = "distance"
-                if 1 < i <= index_psi:
-                    matrix_data[0][i] = "psi" + str(i - 1)
-                if index_psi < i:
-                    matrix_data[0][i] = "phi" + str(i - number_angle_psi - 1)
+            columns = []
 
-            # for row in matrix_data:
-            #     print(row)
-            # print(matrix_data)
-            # for i in range(0, int(number_frames)):
-            for i in range(0, 2):
-                print(from_index)
-                print("to:  ", int(to_index))
-                # to_index = int(number_atoms) + 3
+            for i in range(0, cols):
+                if i == 0:
+                    columns.append("t")
+                elif i == 1:
+                    columns.append("distance")
+                elif 1 < i <= index_psi:
+                    columns.append("psi" + str(i - 1))
+                elif index_psi < i:
+                    columns.append("phi" + str(i - number_angle_psi - 1))
+
+            for i in range(0, number_frames):
                 t, distance = count_distance(
                     file_input, number_atoms, from_index, to_index
                 )
                 # write t to matrix
-                matrix_data[i + 1][0] = t
+                values[i][0] = t
                 # write distance to matrix
-                matrix_data[i + 1][1] = distance
-                # del list_angle_psi[:]
-                # del list_angle_phi[:]
-                # print("angle_psi avant", angle_psi)
-                # print("angle_phi apres", angle_phi)
+                values[i][1] = distance
+
                 angle_psi, angle_phi = dihedral_angle(
                     file_input,
                     number_atoms,
@@ -360,25 +323,23 @@ def Molecular_Dynamics_Simulation(file_input, file_data):
                     to_index,
                 )
 
-                for j in range(len(matrix_data[0]) - 2):
-                    print(j)
+                for j in range(len(values[0]) - 2):
                     if j < len(angle_psi):
-                        matrix_data[i + 1][j + 2] = angle_psi[j]
+                        values[i][j + 2] = angle_psi[j]
                     else:
-                        matrix_data[i + 1][j + 2] = angle_phi[j - 4]
-
-                # print("angle_psi", angle_psi)
-                # print("angle_phi", angle_phi)
+                        values[i][j + 2] = angle_phi[j - 4]
 
                 from_index = from_index + 3 + int(number_atoms)
                 to_index += int(number_atoms) + 3
 
-            print(matrix_data)
+            df = pd.DataFrame(values, columns=columns)
+
+            df.to_csv(file_data, index=False)
+
     except Exception as e:
         logging.info(f"Error while opening file gro: {e}")
 
 
-# file_input = "data.gro"
 file_input = str(sys.argv[1])
 file_data = str(sys.argv[2])
 Molecular_Dynamics_Simulation(file_input, file_data)

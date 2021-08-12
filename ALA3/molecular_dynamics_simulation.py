@@ -283,8 +283,9 @@ def Molecular_Dynamics_Simulation(file_input, file_data):
     df.to_csv(file_data, index=False)
 
 
-start_time = time.time()
-file_input = str(sys.argv[1])
-file_data = str(sys.argv[2])
-Molecular_Dynamics_Simulation(file_input, file_data)
-print("--- %s seconds ---" % (time.time() - start_time))
+if __name__ == "__main__":
+    start_time = time.time()
+    file_input = str(sys.argv[1])
+    file_data = str(sys.argv[2])
+    Molecular_Dynamics_Simulation(file_input, file_data)
+    print("--- %s seconds ---" % (time.time() - start_time))

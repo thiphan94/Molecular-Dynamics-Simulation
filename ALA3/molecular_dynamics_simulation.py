@@ -294,18 +294,23 @@ def Molecular_Dynamics_Simulation(file_input, file_data):
             index_psi = 1 + number_angle_psi
 
             columns = []
+            index_psi = 0
+            index_phi = 1
 
             for i in range(0, cols):
                 if i == 0:
                     columns.append("t")
                 elif i == 1:
                     columns.append("distance")
-                elif 1 < i <= index_psi:
-                    columns.append("psi" + str(i - 1))
-                elif index_psi < i:
-                    columns.append("phi" + str(i - number_angle_psi - 1))
+                elif i % 2 == 0 and i != 0:
+                    columns.append("psi" + str(index_psi))
+                    index_psi += 1
+                else:
+                    columns.append("phi" + str(index_phi))
+                    index_phi += 1
 
-            for i in range(0, number_frames):
+            for i in range(0, 2):
+                # for i in range(0, number_frames):
                 t, distance = count_distance(
                     file_input, number_atoms, from_index, to_index
                 )

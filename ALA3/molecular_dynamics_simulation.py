@@ -1,5 +1,4 @@
 """Calculation of atomic distances."""
-
 import math
 import logging
 import re
@@ -11,20 +10,13 @@ import time
 
 def count_frame(lines):
     """Function to calculate frames in file."""
-    count = 0
-    for line in lines:
-        # line starts with "G"
-        if line.startswith("G"):
-            count += 1
-    return count
+    return sum(1 for line in lines if line.startswith("G"))
 
 
 def count_distance(lines, number, from_index, to_index):
     """Function to calculate the end-to-end distance."""
     sublines = lines[from_index:to_index]
     for index, line in enumerate(sublines):
-
-        pattern = "=(.+?)step"
         if line == number:
             t = re.search("=(.+?)step", sublines[index - 1]).group(1)
 
@@ -34,12 +26,7 @@ def count_distance(lines, number, from_index, to_index):
             list_atom2 = atom2.split()
             list_atom1 = list(map(float, list_atom1[3:6]))
             list_atom2 = list(map(float, list_atom2[3:6]))
-            distance = (
-                ((list_atom2[0] - list_atom1[0]) ** 2)
-                + ((list_atom2[1] - list_atom1[1]) ** 2)
-                + ((list_atom2[2] - list_atom1[2]) ** 2)
-            ) ** 0.5
-
+            distance = np.linalg.norm(np.array(list_atom2) - np.array(list_atom1))
     return float(t), distance
 
 
@@ -55,25 +42,25 @@ def count_angle(lines, number):
     # index of four atoms in chain psi
     psi = []
 
-    for index, line in enumerate(lines[0:last]):
-        if len(lines[index].split()) > 4 and lines[index].split()[1] != "by":
-            if lines[index].split()[1] == "N":
-                psi.append(lines[index].split()[2])
+    for line in lines[0:last]:
+        if len(line.split()) > 4 and line.split()[1] != "by":
+            if line.split()[1] == "N":
+                psi.append(line.split()[2])
 
                 if len(phi) == 1:
-                    phi.append(lines[index].split()[2])
+                    phi.append(line.split()[2])
 
-            if lines[index].split()[1] == "CA":
-                psi.append(lines[index].split()[2])
+            if line.split()[1] == "CA":
+                psi.append(line.split()[2])
 
                 if len(phi) == 2:
-                    phi.append(lines[index].split()[2])
+                    phi.append(line.split()[2])
 
-            if lines[index].split()[1] == "C":
-                psi.append(lines[index].split()[2])
+            if line.split()[1] == "C":
+                psi.append(line.split()[2])
 
                 if len(phi) == 0 or len(psi) == 3:
-                    phi.append(lines[index].split()[2])
+                    phi.append(line.split()[2])
 
             if len(phi) == 4:
                 list_angle_phi.append(phi[:])
@@ -96,15 +83,13 @@ def dihedral_angle(lines, list_angle_psi, list_angle_phi, from_index, to_index):
     vector_psi = []
     vector_phi = []
 
-    for index, line in enumerate(sublines):
-        if len(sublines[index].split()) > 4 and sublines[index].split()[1] != "by":
-            if any(sublines[index].split()[2] in sublist for sublist in list_angle_psi):
+    for line in sublines:
+        if len(line.split()) > 4 and line.split()[1] != "by":
+            if any(line.split()[2] in sublist for sublist in list_angle_psi):
+                psi_coordinates.append(line.split()[3:6])
 
-                psi_coordinates.append(sublines[index].split()[3:6])
-
-            if any(sublines[index].split()[2] in sublist for sublist in list_angle_phi):
-
-                phi_coordinates.append(sublines[index].split()[3:6])
+            if any(line.split()[2] in sublist for sublist in list_angle_phi):
+                phi_coordinates.append(line.split()[3:6])
 
             if len(phi_coordinates) == 4:
                 list_coordinates_phi.append(phi_coordinates[:])
@@ -188,6 +173,25 @@ def vector(list_coordinates_psi, list_coordinates_phi):
     return vector_psi, vector_phi
 
 
+def calculate_angle(vector_ij, vector_kj, vector_kl):
+    im = vector_ij - np.dot(
+        (np.dot(vector_ij, vector_kj) / np.linalg.norm(vector_kj) ** 2),
+        vector_kj,
+    )
+
+    ln = -vector_kl + np.dot(
+        (np.dot(vector_kl, vector_kj) / np.linalg.norm(vector_kj) ** 2),
+        vector_kj,
+    )
+
+    value_arccos = np.dot(im, ln) / np.dot(np.linalg.norm(im), np.linalg.norm(ln))
+
+    sign_angle = np.sign(np.dot(vector_ij, np.cross(vector_kj, vector_kl)))
+
+    angle = math.degrees(np.arccos(value_arccos) * sign_angle)
+    return angle
+
+
 def value_angle(vector_psi, vector_phi):
     """Function to calculate vector im and vector ln."""
     list_angle_psi = []
@@ -197,25 +201,7 @@ def value_angle(vector_psi, vector_phi):
         vector_kj_psi = np.array(vector[1])
         vector_kl_psi = np.array(vector[2])
 
-        im_psi = vector_ij_psi - np.dot(
-            (np.dot(vector_ij_psi, vector_kj_psi) / np.linalg.norm(vector_kj_psi)),
-            vector_kj_psi,
-        )
-
-        ln_psi = -vector_kl_psi + np.dot(
-            (np.dot(vector_kl_psi, vector_kj_psi) / np.linalg.norm(vector_kj_psi)),
-            vector_kj_psi,
-        )
-
-        value_arccos_psi = np.dot(im_psi, ln_psi) / np.dot(
-            np.linalg.norm(im_psi), np.linalg.norm(ln_psi)
-        )
-
-        sign_angle_psi = np.sign(
-            np.dot(vector_ij_psi, np.cross(vector_kj_psi, vector_kl_psi))
-        )
-
-        angle_psi = math.degrees(np.arccos(value_arccos_psi) * sign_angle_psi)
+        angle_psi = calculate_angle(vector_ij_psi, vector_kj_psi, vector_kl_psi)
         list_angle_psi.append(angle_psi)
 
     for vector in vector_phi:
@@ -223,25 +209,7 @@ def value_angle(vector_psi, vector_phi):
         vector_kj_phi = np.array(vector[1])
         vector_kl_phi = np.array(vector[2])
 
-        im_phi = vector_ij_phi - np.dot(
-            (np.dot(vector_ij_phi, vector_kj_phi) / np.linalg.norm(vector_kj_phi)),
-            vector_kj_phi,
-        )
-
-        ln_phi = -vector_kl_phi + np.dot(
-            (np.dot(vector_kl_phi, vector_kj_phi) / np.linalg.norm(vector_kj_phi)),
-            vector_kj_phi,
-        )
-
-        value_arccos_phi = np.dot(im_phi, ln_phi) / np.dot(
-            np.linalg.norm(im_phi), np.linalg.norm(ln_phi)
-        )
-
-        sign_angle_phi = np.sign(
-            np.dot(vector_ij_phi, np.cross(vector_kj_phi, vector_kl_phi))
-        )
-
-        angle_phi = math.degrees(np.arccos(value_arccos_phi) * sign_angle_phi)
+        angle_phi = calculate_angle(vector_ij_phi, vector_kj_phi, vector_kl_phi)
         list_angle_phi.append(angle_phi)
     return list_angle_psi, list_angle_phi
 

@@ -309,8 +309,9 @@ def Molecular_Dynamics_Simulation(file_input, file_data):
                     columns.append("phi" + str(index_phi))
                     index_phi += 1
 
-            for i in range(0, 2):
-                # for i in range(0, number_frames):
+            # for i in range(0, 100):
+            for i in range(0, number_frames):
+                print(i)
                 t, distance = count_distance(
                     file_input, number_atoms, from_index, to_index
                 )

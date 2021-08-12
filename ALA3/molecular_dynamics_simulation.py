@@ -2,17 +2,15 @@
 
 import math
 import logging
-import linecache
 import re
 import numpy as np
 import sys
 import pandas as pd
 import time
 
-"""Function to calculate frames in file."""
-
 
 def count_frame(lines):
+    """Function to calculate frames in file."""
     count = 0
     for line in lines:
         # line starts with "G"
@@ -21,10 +19,8 @@ def count_frame(lines):
     return count
 
 
-"""Function to calculate the end-to-end distance."""
-
-
 def count_distance(lines, number, from_index, to_index):
+    """Function to calculate the end-to-end distance."""
     sublines = lines[from_index:to_index]
     for index, line in enumerate(sublines):
 
@@ -192,10 +188,8 @@ def vector(list_coordinates_psi, list_coordinates_phi):
     return vector_psi, vector_phi
 
 
-"""Function to calculate vector im and vector ln."""
-
-
 def value_angle(vector_psi, vector_phi):
+    """Function to calculate vector im and vector ln."""
     list_angle_psi = []
     list_angle_phi = []
     for vector in vector_psi:
@@ -252,10 +246,27 @@ def value_angle(vector_psi, vector_phi):
     return list_angle_psi, list_angle_phi
 
 
-"""Main function."""
+def read_frames(
+    lines, number_atoms, from_index, to_index, list_angle_psi, list_angle_phi
+):
+    t, distance = count_distance(lines, number_atoms, from_index, to_index)
+    values = [t, distance]
+
+    angle_psi, angle_phi = dihedral_angle(
+        lines,
+        list_angle_psi,
+        list_angle_phi,
+        from_index,
+        to_index,
+    )
+    for psi, phi in zip(angle_psi, angle_phi):
+        values = values + [psi, phi]
+
+    return values
 
 
 def Molecular_Dynamics_Simulation(file_input, file_data):
+    """Main function."""
     try:
         with open(file_input) as f:
             lines = f.readlines()
@@ -266,8 +277,8 @@ def Molecular_Dynamics_Simulation(file_input, file_data):
     print("Number of frames:", number_frames)
     number_atoms = lines[1]
     print("Number of atoms:", number_atoms)
-    from_index = 0
-    to_index = int(number_atoms) + 2
+    from_indices = range(0, number_frames, 3 + int(number_atoms))
+    to_indices = range(int(number_atoms) + 2, number_frames, 3 + int(number_atoms))
     # calculate number of psi angle and phi angle
     list_angle_psi, list_angle_phi = count_angle(lines, number_atoms)
     number_angle_psi = len(list_angle_psi)
@@ -276,9 +287,6 @@ def Molecular_Dynamics_Simulation(file_input, file_data):
     # initialize size of matrix
     cols = 2 + number_angle_phi + number_angle_psi
 
-    rows = number_frames
-
-    values = [[0 for i in range(cols)] for j in range(rows)]
     index_psi = 1 + number_angle_psi
 
     columns = []
@@ -297,33 +305,13 @@ def Molecular_Dynamics_Simulation(file_input, file_data):
             columns.append("phi" + str(index_phi))
             index_phi += 1
 
-    # for i in range(0, 100):
-    for i in range(0, number_frames):
-        t, distance = count_distance(lines, number_atoms, from_index, to_index)
-        # write t to matrix
-        values[i][0] = t
-        # write distance to matrix
-        values[i][1] = distance
-
-        angle_psi, angle_phi = dihedral_angle(
-            lines,
-            list_angle_psi,
-            list_angle_phi,
-            from_index,
-            to_index,
+    frames = [
+        read_frames(
+            lines, number_atoms, from_index, to_index, list_angle_psi, list_angle_phi
         )
-
-        for j in range(len(values[0]) - 2):
-            if j < len(angle_psi):
-                values[i][j + 2] = angle_psi[j]
-            else:
-                values[i][j + 2] = angle_phi[j - 4]
-
-        from_index = from_index + 3 + int(number_atoms)
-        to_index += int(number_atoms) + 3
-
-    df = pd.DataFrame(values, columns=columns)
-
+        for from_index, to_index in zip(from_indices, to_indices)
+    ]
+    df = pd.DataFrame(np.array(frames), columns=columns)
     df.to_csv(file_data, index=False)
 
 

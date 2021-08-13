@@ -119,24 +119,13 @@ def vector(list_coordinates_psi, list_coordinates_phi):
     vector_phi = []
 
     for chain_psi in list_coordinates_psi:
-
-        x_ij_psi = float(chain_psi[1][0]) - float(chain_psi[0][0])
-        y_ij_psi = float(chain_psi[1][1]) - float(chain_psi[0][1])
-        z_ij_psi = float(chain_psi[1][2]) - float(chain_psi[0][2])
-
-        ij_psi.extend((x_ij_psi, y_ij_psi, z_ij_psi))
-
-        x_kj_psi = float(chain_psi[2][0]) - float(chain_psi[1][0])
-        y_kj_psi = float(chain_psi[2][1]) - float(chain_psi[1][1])
-        z_kj_psi = float(chain_psi[2][2]) - float(chain_psi[1][2])
-
-        kj_psi.extend((x_kj_psi, y_kj_psi, z_kj_psi))
-
-        x_kl_psi = float(chain_psi[3][0]) - float(chain_psi[2][0])
-        y_kl_psi = float(chain_psi[3][1]) - float(chain_psi[2][1])
-        z_kl_psi = float(chain_psi[3][2]) - float(chain_psi[2][2])
-
-        kl_psi.extend((x_kl_psi, y_kl_psi, z_kl_psi))
+        for i in range(3):
+            ij = float(chain_psi[1][i]) - float(chain_psi[0][i])
+            kj = float(chain_psi[2][i]) - float(chain_psi[1][i])
+            kl = float(chain_psi[3][i]) - float(chain_psi[2][i])
+            ij_psi.append(ij)
+            kj_psi.append(kj)
+            kl_psi.append(kl)
 
         vector_psi.append([ij_psi[:], kj_psi[:], kl_psi[:]])
 
@@ -145,24 +134,13 @@ def vector(list_coordinates_psi, list_coordinates_phi):
         del kl_psi[:]
 
     for chain_phi in list_coordinates_phi:
-
-        x_ij_phi = float(chain_phi[1][0]) - float(chain_phi[0][0])
-        y_ij_phi = float(chain_phi[1][1]) - float(chain_phi[0][1])
-        z_ij_phi = float(chain_phi[1][2]) - float(chain_phi[0][2])
-
-        ij_phi.extend((x_ij_phi, y_ij_phi, z_ij_phi))
-
-        x_kj_phi = float(chain_phi[2][0]) - float(chain_phi[1][0])
-        y_kj_phi = float(chain_phi[2][1]) - float(chain_phi[1][1])
-        z_kj_phi = float(chain_phi[2][2]) - float(chain_phi[1][2])
-
-        kj_phi.extend((x_kj_phi, y_kj_phi, z_kj_phi))
-
-        x_kl_phi = float(chain_phi[3][0]) - float(chain_phi[2][0])
-        y_kl_phi = float(chain_phi[3][1]) - float(chain_phi[2][1])
-        z_kl_phi = float(chain_phi[3][2]) - float(chain_phi[2][2])
-
-        kl_phi.extend((x_kl_phi, y_kl_phi, z_kl_phi))
+        for i in range(3):
+            ij = float(chain_phi[1][i]) - float(chain_phi[0][i])
+            kj = float(chain_phi[2][i]) - float(chain_phi[1][i])
+            kl = float(chain_phi[3][i]) - float(chain_phi[2][i])
+            ij_phi.append(ij)
+            kj_phi.append(kj)
+            kl_phi.append(kl)
 
         vector_phi.append([ij_phi[:], kj_phi[:], kl_phi[:]])
 

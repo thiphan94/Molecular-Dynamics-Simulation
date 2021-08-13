@@ -190,7 +190,6 @@ def value_angle(vector_psi, vector_phi):
     """Function to calculate vector im and vector ln."""
     list_angle_psi = []
     list_angle_phi = []
-    print(vector_psi, vector_phi)
     for vector in vector_psi:
         vector_ij_psi = np.array(vector[0])
         vector_kj_psi = np.array(vector[1])

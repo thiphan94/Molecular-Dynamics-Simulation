@@ -162,7 +162,7 @@ def calculate_angle(vector_ij, vector_kj, vector_kl):
         vector_kj,
     )
 
-    value_arccos = np.dot(im, ln) / np.dot(np.linalg.norm(im), np.linalg.norm(ln))
+    value_arccos = np.dot(im, ln) / (np.linalg.norm(im) * np.linalg.norm(ln))
 
     sign_angle = np.sign(np.dot(vector_ij, np.cross(vector_kj, vector_kl)))
 

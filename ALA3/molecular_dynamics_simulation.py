@@ -106,49 +106,65 @@ def dihedral_angle(lines, list_angle_psi, list_angle_phi, from_index, to_index):
     return angle_psi, angle_phi
 
 
-def vector(list_coordinates_psi, list_coordinates_phi):
-    """Function to calculate vector between 4 atoms."""
-    ij_psi = []
-    kj_psi = []
-    kl_psi = []
+def vector(coordinates):
+    coordinates_vector = np.array(coordinates, dtype=float)
+    vectors = np.array(
+        [
+            coordinates_vector[1, :] - coordinates_vector[0, :],
+            coordinates_vector[1, :] - coordinates_vector[2, :],
+            coordinates_vector[3, :] - coordinates_vector[2, :],
+        ]
+    )
+    return vectors
 
-    ij_phi = []
-    kj_phi = []
-    kl_phi = []
-    vector_psi = []
-    vector_phi = []
 
-    for chain_psi in list_coordinates_psi:
-        for i in range(3):
-            ij = float(chain_psi[1][i]) - float(chain_psi[0][i])
-            kj = float(chain_psi[2][i]) - float(chain_psi[1][i])
-            kl = float(chain_psi[3][i]) - float(chain_psi[2][i])
-            ij_psi.append(ij)
-            kj_psi.append(kj)
-            kl_psi.append(kl)
+# def vector(list_coordinates_psi, list_coordinates_phi):
+#     """Function to calculate vector between 4 atoms."""
+#     print("Vector")
+#     print(list_coordinates_psi)
+#     print(list_coordinates_phi)
+#     ij_psi = []
+#     kj_psi = []
+#     kl_psi = []
 
-        vector_psi.append([ij_psi[:], kj_psi[:], kl_psi[:]])
+#     ij_phi = []
+#     kj_phi = []
+#     kl_phi = []
+#     vector_psi = []
+#     vector_phi = []
 
-        del ij_psi[:]
-        del kj_psi[:]
-        del kl_psi[:]
+#     for chain_psi in list_coordinates_psi:
+#         for i in range(3):
+#             ij = float(chain_psi[1][i]) - float(chain_psi[0][i])
+#             kj = float(chain_psi[2][i]) - float(chain_psi[1][i])
+#             kl = float(chain_psi[3][i]) - float(chain_psi[2][i])
+#             ij_psi.append(ij)
+#             kj_psi.append(kj)
+#             kl_psi.append(kl)
 
-    for chain_phi in list_coordinates_phi:
-        for i in range(3):
-            ij = float(chain_phi[1][i]) - float(chain_phi[0][i])
-            kj = float(chain_phi[2][i]) - float(chain_phi[1][i])
-            kl = float(chain_phi[3][i]) - float(chain_phi[2][i])
-            ij_phi.append(ij)
-            kj_phi.append(kj)
-            kl_phi.append(kl)
+#         vector_psi.append([ij_psi[:], kj_psi[:], kl_psi[:]])
 
-        vector_phi.append([ij_phi[:], kj_phi[:], kl_phi[:]])
+#         del ij_psi[:]
+#         del kj_psi[:]
+#         del kl_psi[:]
 
-        del ij_phi[:]
-        del kj_phi[:]
-        del kl_phi[:]
+#     for chain_phi in list_coordinates_phi:
+#         for i in range(3):
+#             ij = float(chain_phi[1][i]) - float(chain_phi[0][i])
+#             kj = float(chain_phi[2][i]) - float(chain_phi[1][i])
+#             kl = float(chain_phi[3][i]) - float(chain_phi[2][i])
+#             ij_phi.append(ij)
+#             kj_phi.append(kj)
+#             kl_phi.append(kl)
 
-    return vector_psi, vector_phi
+#         vector_phi.append([ij_phi[:], kj_phi[:], kl_phi[:]])
+
+#         del ij_phi[:]
+#         del kj_phi[:]
+#         del kl_phi[:]
+#     print(vector_psi, vector_phi)
+#     print("End vector")
+#     return vector_psi, vector_phi
 
 
 def calculate_angle(vector_ij, vector_kj, vector_kl):
@@ -174,6 +190,7 @@ def value_angle(vector_psi, vector_phi):
     """Function to calculate vector im and vector ln."""
     list_angle_psi = []
     list_angle_phi = []
+    print(vector_psi, vector_phi)
     for vector in vector_psi:
         vector_ij_psi = np.array(vector[0])
         vector_kj_psi = np.array(vector[1])
@@ -228,6 +245,8 @@ def Molecular_Dynamics_Simulation(file_input, file_data):
         int(number_atoms) + 2 + (3 + int(number_atoms)) * i
         for i in range(number_frames)
     ]
+    from_indices = [from_indices[0]]
+    to_indices = [to_indices[0]]
     # calculate number of psi angle and phi angle
     list_angle_psi, list_angle_phi = count_angle(lines, number_atoms)
     number_angle_psi = len(list_angle_psi)

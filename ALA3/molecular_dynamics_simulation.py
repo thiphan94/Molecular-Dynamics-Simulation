@@ -245,8 +245,11 @@ def Molecular_Dynamics_Simulation(file_input, file_data):
     print("Number of frames:", number_frames)
     number_atoms = lines[1]
     print("Number of atoms:", number_atoms)
-    from_indices = range(0, number_frames, 3 + int(number_atoms))
-    to_indices = range(int(number_atoms) + 2, number_frames, 3 + int(number_atoms))
+    from_indices = [(3 + int(number_atoms)) * i for i in range(number_frames)]
+    to_indices = [
+        int(number_atoms) + 2 + (3 + int(number_atoms)) * i
+        for i in range(number_frames)
+    ]
     # calculate number of psi angle and phi angle
     list_angle_psi, list_angle_phi = count_angle(lines, number_atoms)
     number_angle_psi = len(list_angle_psi)
